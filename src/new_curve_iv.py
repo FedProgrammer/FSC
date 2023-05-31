@@ -104,8 +104,8 @@ ax1.errorbar(I_56,V_56, yerr= V_err, marker="o", linewidth = 0, markersize=3, la
 ax1.errorbar(I_57,V_57, yerr= V_err, marker="o", linewidth = 0, markersize=3, label="T = 57.5 K", elinewidth = 0.5, ecolor = 'k', mfc = 'purple', mew = 0)
 ax1.errorbar(I_62,V_62, yerr= V_err, marker="o", linewidth = 0, markersize=3, label="T = 62.5 K", elinewidth = 0.5, ecolor = 'k', mfc = 'olive', mew = 0)
 
-ax1.set_xlabel('I[mA]', fontsize = label_size)
-ax1.set_ylabel('V[mV]', fontsize = label_size)
+ax1.set_xlabel('I [mA]', fontsize = label_size)
+ax1.set_ylabel('V [mV]', fontsize = label_size)
 ax1.set_title("I-V curves at different temperatures", fontsize = title_size)
 ax1.legend(loc="lower right")
 ax1.grid()
@@ -121,17 +121,19 @@ I_th_err = []
 #G_err = []
 
 
-
-### Fitting function according Kim-Anderson Model ###
-print("\n\nFitting function according Kim-Anderson model: \n")
-print("\t\t V = y_0 + A*sinh(I/I_th)\n\n")
-
 def func_fit(x, y0, A, I_th):
     return y0 + A*np.sinh(x/I_th)
+
+param_label = ["y_0", "A", "I_th"]
+param_units = ["mV", "mV", "mA"]
 
 ####################
 #### FIT 48.5 ######
 ####################
+
+### Fitting function according Kim-Anderson Model ###
+print("\n\nFitting function according Kim-Anderson model: \n")
+print("\t\t V = y_0 + A*sinh(I/I_th)\n\n")
 
 
 print("----------------------------")
@@ -146,16 +148,210 @@ Ierr_48 = np.zeros(ndata_48)
 
 ######## scipy optimize ######
 
-
 param48, cov48 = curve_fit(func_fit, I_48, V_48, sigma = Verr_48)
-print(param48)
+#print(param48)
+param_err48 = np.sqrt(np.diag(cov48))
 
 fig3, ax3 = plt.subplots(figsize=(8,6))
 
 ax3.plot(I_48, V_48, marker="o", markersize=3, color = "blue", label='data', linewidth = 0)
-ax3.plot(I_48, func_fit(I_48, *param48), 'r-', label='fit: y0=%5.3f, A=%5.3f, I_th=%5.3f' % tuple(param48))
+ax3.plot(I_48, func_fit(I_48, *param48), 'r-', label='fitted curve')
 
-ax3.set_xlabel('I[mA]', fontsize = label_size)
-ax3.set_ylabel('V[mV]', fontsize = label_size)
-ax3.set_title("I-V at 48.5 K", fontsize = title_size)
+textstr = '\n'.join((
+    r'$\bf{Fit \ parameters: }$',
+    r'$y_0 = %.5f \pm %.6f $ mV' % (param48[0], param_err48[0]),
+    r'$A = %.7f \pm %.7f$ mV' % (param48[1], param_err48[1]),
+    r'$I_{th} = %.3f \pm %.3f$ mA' % (param48[2], param_err48[2])))
+
+props = dict(boxstyle='round', facecolor='grey', alpha=0.5)
+
+ax3.text(0.05, 0.95, textstr, transform=ax3.transAxes, fontsize=14,
+        verticalalignment='top', bbox=props)
+
+ax3.grid()
+ax3.set_xlabel('I [mA]', fontsize = label_size)
+ax3.set_ylabel('V [mV]', fontsize = label_size)
+ax3.set_title("I-V at T = 48.5 K", fontsize = title_size)
+ax3.legend(loc="lower right")
 fig3.savefig(f"{OUTDIR}/fit_48_5.png")
+
+print("\n\nFitting results:\n")
+for i in range(3):
+    print(param_label[i]," = ", param48[i], " +- ", param_err48[i], " ", param_units[i], "\n")
+
+I_th.append(param48[2])
+I_th_err.append(param_err48[2])
+
+
+####################
+#### FIT 51.5 ######
+####################
+
+### Fitting function according Kim-Anderson Model ###
+print("\n\nFitting function according Kim-Anderson model: \n")
+print("\t\t V = y_0 + A*sinh(I/I_th)\n\n")
+
+
+print("----------------------------")
+print("|                          |")
+print("|      Fit T = 51.5 K      |")
+print("|                          |")
+print("----------------------------")
+
+ndata_51 = len(I_51)
+Verr_51 = 10*np.ones(ndata_51)*V_err
+Ierr_51 = np.zeros(ndata_51)
+
+######## scipy optimize ######
+
+param51, cov51 = curve_fit(func_fit, I_51, V_51, sigma = Verr_51)
+#print(param48)
+param_err51 = np.sqrt(np.diag(cov51))
+
+fig3, ax3 = plt.subplots(figsize=(8,6))
+
+ax3.plot(I_51, V_51, marker="o", markersize=3, color = "blue", label='data', linewidth = 0)
+ax3.plot(I_51, func_fit(I_51, *param51), 'r-', label='fitted curve')
+
+textstr = '\n'.join((
+    r'$\bf{Fit \ parameters: }$',
+    r'$y_0 = %.5f \pm %.6f $ mV' % (param51[0], param_err51[0]),
+    r'$A = %.7f \pm %.7f$ mV' % (param51[1], param_err51[1]),
+    r'$I_{th} = %.3f \pm %.3f$ mA' % (param51[2], param_err51[2])))
+
+props = dict(boxstyle='round', facecolor='grey', alpha=0.5)
+
+ax3.text(0.05, 0.95, textstr, transform=ax3.transAxes, fontsize=14,
+        verticalalignment='top', bbox=props)
+
+ax3.grid()
+ax3.set_xlabel('I [mA]', fontsize = label_size)
+ax3.set_ylabel('V [mV]', fontsize = label_size)
+ax3.set_title("I-V at T = 51.5 K", fontsize = title_size)
+ax3.legend(loc="lower right")
+fig3.savefig(f"{OUTDIR}/fit_51_5.png")
+
+print("\n\nFitting results:\n")
+for i in range(3):
+    print(param_label[i]," = ", param51[i], " +- ", param_err51[i], " ", param_units[i], "\n")
+
+I_th.append(param51[2])
+I_th_err.append(param_err51[2])
+
+
+####################
+#### FIT 53.5 ######
+####################
+
+### Fitting function according Kim-Anderson Model ###
+print("\n\nFitting function according Kim-Anderson model: \n")
+print("\t\t V = y_0 + A*sinh(I/I_th)\n\n")
+
+
+print("----------------------------")
+print("|                          |")
+print("|      Fit T = 53.5 K      |")
+print("|                          |")
+print("----------------------------")
+
+ndata_53 = len(I_53)
+Verr_53 = 10*np.ones(ndata_53)*V_err
+Ierr_53 = np.zeros(ndata_53)
+
+######## scipy optimize ######
+
+param53, cov53 = curve_fit(func_fit, I_53, V_53, sigma = Verr_53)
+#print(param48)
+param_err53 = np.sqrt(np.diag(cov53))
+
+fig3, ax3 = plt.subplots(figsize=(8,6))
+
+ax3.plot(I_53, V_53, marker="o", markersize=3, color = "blue", label='data', linewidth = 0)
+ax3.plot(I_53, func_fit(I_53, *param53), 'r-', label='fitted curve')
+
+textstr = '\n'.join((
+    r'$\bf{Fit \ parameters: }$',
+    r'$y_0 = %.5f \pm %.6f $ mV' % (param53[0], param_err53[0]),
+    r'$A = %.7f \pm %.7f$ mV' % (param53[1], param_err53[1]),
+    r'$I_{th} = %.3f \pm %.3f$ mA' % (param53[2], param_err53[2])))
+
+props = dict(boxstyle='round', facecolor='grey', alpha=0.5)
+
+ax3.text(0.05, 0.95, textstr, transform=ax3.transAxes, fontsize=14,
+        verticalalignment='top', bbox=props)
+
+ax3.grid()
+ax3.set_xlabel('I [mA]', fontsize = label_size)
+ax3.set_ylabel('V [mV]', fontsize = label_size)
+ax3.set_title("I-V at T = 53.5 K", fontsize = title_size)
+ax3.legend(loc="lower right")
+fig3.savefig(f"{OUTDIR}/fit_53_5.png")
+
+print("\n\nFitting results:\n")
+for i in range(3):
+    print(param_label[i]," = ", param53[i], " +- ", param_err53[i], " ", param_units[i], "\n")
+
+I_th.append(param53[2])
+I_th_err.append(param_err53[2])
+
+
+####################
+#### FIT 54.5 ######
+####################
+
+### Fitting function according Kim-Anderson Model ###
+print("\n\nFitting function according Kim-Anderson model: \n")
+print("\t\t V = y_0 + A*sinh(I/I_th)\n\n")
+
+
+print("----------------------------")
+print("|                          |")
+print("|      Fit T = 54.5 K      |")
+print("|                          |")
+print("----------------------------")
+
+ndata_54 = len(I_54)
+Verr_54 = 10*np.ones(ndata_54)*V_err
+Ierr_54 = np.zeros(ndata_54)
+
+######## scipy optimize ######
+
+param54, cov54 = curve_fit(func_fit, I_54, V_54, sigma = Verr_54)
+#print(param48)
+param_err54 = np.sqrt(np.diag(cov54))
+
+fig3, ax3 = plt.subplots(figsize=(8,6))
+
+ax3.plot(I_54, V_54, marker="o", markersize=3, color = "blue", label='data', linewidth = 0)
+ax3.plot(I_54, func_fit(I_54, *param54), 'r-', label='fitted curve')
+
+textstr = '\n'.join((
+    r'$\bf{Fit \ parameters: }$',
+    r'$y_0 = %.5f \pm %.6f $ mV' % (param54[0], param_err54[0]),
+    r'$A = %.7f \pm %.7f$ mV' % (param54[1], param_err54[1]),
+    r'$I_{th} = %.3f \pm %.3f$ mA' % (param54[2], param_err54[2])))
+
+props = dict(boxstyle='round', facecolor='grey', alpha=0.5)
+
+ax3.text(0.05, 0.95, textstr, transform=ax3.transAxes, fontsize=14,
+        verticalalignment='top', bbox=props)
+
+ax3.grid()
+ax3.set_xlabel('I [mA]', fontsize = label_size)
+ax3.set_ylabel('V [mV]', fontsize = label_size)
+ax3.set_title("I-V at T = 54.5 K", fontsize = title_size)
+ax3.legend(loc="lower right")
+fig3.savefig(f"{OUTDIR}/fit_54_5.png")
+
+print("\n\nFitting results:\n")
+for i in range(3):
+    print(param_label[i]," = ", param54[i], " +- ", param_err54[i], " ", param_units[i], "\n")
+
+I_th.append(param54[2])
+I_th_err.append(param_err54[2])
+
+
+
+
+print(I_th)
+

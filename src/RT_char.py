@@ -49,7 +49,7 @@ ax2.grid()
 fig2.savefig(f"{OUTDIR}/RT_char.png")
 
 
-## ZOOM ##
+## ZOOM Tc,mid ##
 
 fig3, ax3 = plt.subplots(figsize=(8,6))
 
@@ -70,3 +70,44 @@ Tmid = np.mean(T_prime[peaks])
 Tmid_err = np.std(T_prime[peaks])
 print(Tmid)
 print(Tmid_err)
+
+
+## ZOOM Tc,0 ##
+
+#determining the offset
+
+R1 = []
+
+for i in range(len(T_sample)):
+    if T_sample[i]<57:
+        R1.append(R[i])
+
+R_offset = np.mean(R1)
+sR_offset = np.std(R1)
+
+sigma3_R = 3*sR_offset
+
+x_sigma = np.linspace(min(T_sample),60,200)
+
+y_sigma = np.ones(len(x_sigma))*sigma3_R + R_offset
+
+print(R_offset , " +- ", sR_offset)
+
+x_Tc0 = 56.468213
+y_Tc0 = 0.151901623
+
+fig4, ax4 = plt.subplots(figsize=(8,6))
+
+ax4.errorbar(T_sample, R, yerr = R_err, marker="o", linewidth = 0, markersize=3, label="RT", elinewidth = 0.5, ecolor = 'k', mfc = 'blue', mew = 0, zorder=0)
+ax4.plot(x_sigma, y_sigma, linewidth = 2,linestyle="dashed", label="3 sigma R", color = 'cyan', zorder=1)
+ax4.plot(x_Tc0, y_Tc0, marker='o', linewidth=0, markersize = 6, color='red', label = r"$T_{c,0}$", zorder=2)
+ax4.set_xlabel(r'$T_{sample}$ [K]', fontsize = label_size)
+ax4.set_ylabel(r'$Resistance$ [$\mu$V]', fontsize = label_size)
+ax4.set_title(r"R-T characteristic at I = 3$\mu$A ", fontsize = title_size)
+ax4.legend(loc="upper left")
+ax4.set_xlim(min(T_sample),60)
+ax4.set_ylim(min(R)-0.05,2)
+#ax4.set_xlim(56,58)
+ax4.grid()
+
+fig4.savefig(f"{OUTDIR}/RT_char_zoom_back.png")

@@ -8,7 +8,7 @@ from scipy import constants as const
 from scipy.optimize import curve_fit
 import scipy.constants
 import scipy.odr as odr
-
+from scipy.signal import find_peaks
 
 DATADIR = "../data/flux"
 OUTDIR = "../output"
@@ -236,13 +236,68 @@ print("\n I period mean = %f +- %f  uA\n" %(I_period_mean, I_period_std))
 
 phi_0 = scipy.constants.Planck/(2*scipy.constants.e)
 
-#Mutual inductuanc
+#Mutual inductuance
 
 M = phi_0 / (I_period_mean*1e-6) # H
 M_err = phi_0 * I_period_std*(1e-6) / pow((I_period_mean*1e-6),2) # H
 
-print("\n Mutual inductance M = %f +- %f  nH\n" %(M*1e9, M_err*1e9))
+print("\n Mutual inductance M = %f +- %f  pH\n" %(M*1e12, M_err*1e12))
 
+
+
+###############
+### V-Phi 1 ###
+###############
+
+flux = M*i_1*1e-6 ## Wb
+
+param_flux, cov_flux = curve_fit(sinusoidal_fit, flux, v_1,  bounds=([4,4,12*M*1e-6,48*M*1e-6],[6,5,13*M*1e-6,50*M*1e-6]))
+param_err_flux = np.sqrt(np.diag(cov_flux))
+x_line=np.linspace(min(flux),max(flux),1000)
+
+#derivative
+
+v_1_prime = np.diff(sinusoidal_fit(x_line,*param_flux)) / np.diff(x_line)
+x_prime = (np.array(x_line)[:-1] + np.array(x_line)[1:]) / 2
+
+fig1, ax1 = plt.subplots(figsize=(8,6))
+
+ax1.plot(flux, v_1, linewidth = 1, linestyle = '-', label=r"real V - $\Phi$ char.")
+#ax1.plot(x_prime, v_1_prime, linewidth = 1, linestyle = '-', label=r"$\dv{V}{\Phi}")
+ax1.plot(x_line, sinusoidal_fit(x_line,*param_flux), linewidth = 2,linestyle="dashed", label=r"sinusoidal fit", color = 'green', zorder=2)
+#ax1.plot(x_line2, np.zeros(len(x_line)), linewidth = 2,linestyle="dashed", color = 'green', zorder=2)
+
+ax1.set_xlabel(r'$\Phi$ [Wb]', fontsize = label_size)
+ax1.set_ylabel(r'V [$\mu$V]', fontsize = label_size)
+ax1.set_title(r"V-$\Phi$ characteristic at 77 K", fontsize = title_size)
+#ax1.set_xlim(0,max(I_77_max))
+#ax1.set_ylim(-5,max(V_77_max))
+ax1.legend(loc="lower left")
+ax1.grid()
+
+textstr = '\n'.join((
+    r'$\bf{Sinusoidal \ fit \ parameters: }$',
+    r'y_0 = %.2f$ \pm $ %.2f $\mu$V' % (param_flux[0], param_err_flux[0]),
+    r'A = %.2f$ \pm $ %.2f $\mu$V' % (param_flux[1], param_err_flux[1]),
+    r'$\Phi_c$ = %.2f$ \pm $ %.2f fWb' % (param_flux[2]*1e15, param_err_flux[2]*1e15),
+    r'$w_{Phi}$ = %.2f$ \pm $ %.2f  fWb' % (param_flux[3]*1e15, param_err_flux[3]*1e15)))
+
+props = dict(boxstyle='round', facecolor='grey', alpha=0.9)
+
+ax1.text(0.60, 0.95, textstr, transform=ax1.transAxes, fontsize=14,
+        verticalalignment='top', bbox=props)
+
+
+fig1.savefig(f"{OUTDIR}/squid_v_flux_peaks.png")
+
+
+
+print("----------------------------")
+print("|       Squid @77          |")
+print("|       V - flux           |")
+print("----------------------------")
+
+print("trasfer function = ", max(v_1_prime), " V / Wb" )
 
 
 

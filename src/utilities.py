@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 
 DATADIR = "../data"
+DATADIR_SQUID = "../data/iv_RT"
 OUTPUTDIR = "../output"
 
 def iv_dataframe_to_array(nomefile: str):
@@ -25,3 +26,11 @@ def rt_dataframe_to_array(nomefile: str):
     R = np.array(data[col_name[6]]) # Ohm
     return time, T_diode, T_sample, V, V_err, R
 
+
+def squid_dataframe_to_array(nomefile: str):
+    data = pd.read_csv(f"{DATADIR_SQUID}/{nomefile}")
+    col_name = list(data)
+    current_bias = np.array(data[col_name[0]]) # uA
+    voltage = np.array(data[col_name[1]]) # uV
+    
+    return current_bias, voltage

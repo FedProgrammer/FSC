@@ -95,21 +95,21 @@ print(V_err)
 
 fig1, ax1 = plt.subplots(figsize=(8,6))
 
-ax1.errorbar(I_48,V_48, yerr= V_err, marker="o", linewidth = 0, markersize=3, label="T = 48.0 K", elinewidth = 0.5, ecolor = 'k', mfc = 'cyan', mew = 0)
-ax1.errorbar(I_51,V_51, yerr= V_err, marker="o", linewidth = 0, markersize=3, label="T = 51.5 K", elinewidth = 0.5, ecolor = 'k', mfc = 'pink', mew = 0)
+#ax1.errorbar(I_48,V_48, yerr= V_err, marker="o", linewidth = 0, markersize=3, label="T = 48.0 K", elinewidth = 0.5, ecolor = 'k', mfc = 'cyan', mew = 0)
+#ax1.errorbar(I_51,V_51, yerr= V_err, marker="o", linewidth = 0, markersize=3, label="T = 51.5 K", elinewidth = 0.5, ecolor = 'k', mfc = 'pink', mew = 0)
 ax1.errorbar(I_53,V_53, yerr= V_err, marker="o", linewidth = 0, markersize=3, label="T = 53.5 K", elinewidth = 0.5, ecolor = 'k', mfc = 'blue', mew = 0)
 ax1.errorbar(I_54,V_54, yerr= V_err, marker="o", linewidth = 0, markersize=3, label="T = 54.5 K", elinewidth = 0.5, ecolor = 'k', mfc = 'orange', mew = 0)
 ax1.errorbar(I_55,V_55, yerr= V_err, marker="o", linewidth = 0, markersize=3, label="T = 55.5 K", elinewidth = 0.5, ecolor = 'k', mfc = 'green', mew = 0)
 ax1.errorbar(I_56,V_56, yerr= V_err, marker="o", linewidth = 0, markersize=3, label="T = 56.5 K", elinewidth = 0.5, ecolor = 'k', mfc = 'red', mew = 0)
 ax1.errorbar(I_57,V_57, yerr= V_err, marker="o", linewidth = 0, markersize=3, label="T = 57.5 K", elinewidth = 0.5, ecolor = 'k', mfc = 'purple', mew = 0)
-ax1.errorbar(I_62,V_62, yerr= V_err, marker="o", linewidth = 0, markersize=3, label="T = 62.5 K", elinewidth = 0.5, ecolor = 'k', mfc = 'olive', mew = 0)
+#ax1.errorbar(I_62,V_62, yerr= V_err, marker="o", linewidth = 0, markersize=3, label="T = 62.5 K", elinewidth = 0.5, ecolor = 'k', mfc = 'olive', mew = 0)
 
 ax1.set_xlabel('I [mA]', fontsize = label_size)
 ax1.set_ylabel('V [mV]', fontsize = label_size)
 ax1.set_title("I-V curves at different temperatures", fontsize = title_size)
 ax1.legend(loc="lower right")
 ax1.grid()
-fig1.savefig(f"{OUTDIR}/all_curves.png")
+fig1.savefig(f"{OUTDIR}/all_curves2.png")
 
 
 ### List of parameters ###
